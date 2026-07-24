@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taklifnoma</title>
+    <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Cinzel:wght@500;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: #0f172a;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .card-container {
+            width: 100vw;
+            max-width: 430px;
+            height: 100vh;
+            max-height: 932px;
+            position: relative;
+            overflow: hidden;
+            background: #faf8f5;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.6);
+        }
+
+        /* 1-BOSQICH: KONVERT SAHNASI */
+        .envelope-scene {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 20;
+            cursor: pointer;
+            overflow: hidden;
+            background: url('https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1000&auto=format&fit=crop') center / cover no-repeat;
+            transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1), visibility 1.2s;
+        }
+
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            width: 55%;
+            height: 100%;
+            background: #fbf9f5;
+            background-image: radial-gradient(#e2d9cc 1px, transparent 1px);
+            background-size: 16px 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+            transition: transform 1.2s cubic-bezier(0.77, 0, 0.175, 1);
+            z-index: 22;
+        }
+
+        .flap-left {
+            left: 0;
+            clip-path: polygon(0 0, 100% 0, 35% 50%, 100% 100%, 0 100%);
+        }
+
+        .flap-right {
+            right: 0;
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 65% 50%);
+        }
+
+        .floral-left, .floral-right {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 160px;
+            height: 240px;
+            pointer-events: none;
+            z-index: 24;
+            background-size: contain;
+            background-repeat: no-repeat;
+            opacity: 0.9;
+        }
+
+        .floral-left {
+            left: 5px;
+            background-image: url('https://png.pngtree.com/png-clipart/20230303/ourmid/pngtree-white-peony-flower-watercolor-png-image_6628286.png');
+            background-position: center left;
+        }
+
+        .floral-right {
+            right: 5px;
+            background-image: url('https://png.pngtree.com/png-clipart/20230303/ourmid/pngtree-white-peony-flower-watercolor-png-image_6628286.png');
+            background-position: center right;
+            transform: translateY(-50%) scaleX(-1);
+        }
+
+        .ribbon-line {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            transform: translateY(-50%);
+            background: linear-gradient(90deg, #d4af37, #fef08a, #b45309, #fef08a, #d4af37);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+            z-index: 23;
+        }
+
+        /* BRONZA/OLTIN MUHR (WEDDING INVITATION) */
+        .bronze-seal {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 118px;
+            height: 118px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #fef08a 0%, #ca8a04 45%, #78350f 100%);
+            box-shadow: 0 12px 28px rgba(69, 26, 3, 0.5), inset 0 3px 8px rgba(255,255,255,0.7);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 26;
+            transition: transform 0.8s ease, opacity 0.8s ease;
+            border: 3px solid #b45309;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .bronze-seal::before {
+            content: '';
+            position: absolute;
+            width: 102px;
+            height: 102px;
+            border-radius: 50%;
+            border: 2px dashed rgba(255, 255, 255, 0.5);
+        }
+
+        .seal-text {
+            font-family: 'Cinzel', serif;
+            font-size: 9.5px;
+            font-weight: 700;
+            color: #3b1202;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            line-height: 1.2;
+            text-shadow: 0 1px 1px rgba(255, 255, 255, 0.4);
+            user-select: none;
+        }
+
+        .click-hint {
+            position: absolute;
+            bottom: 8%;
+            width: 100%;
+            text-align: center;
+            font-size: 11px;
+            letter-spacing: 3px;
+            color: #78350f;
+            text-transform: uppercase;
+            font-weight: 600;
+            z-index: 25;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        .envelope-scene.open .flap-left {
+            transform: translateX(-100%);
+        }
+        .envelope-scene.open .flap-right {
+            transform: translateX(100%);
+        }
+        .envelope-scene.open .bronze-seal {
+            transform: translate(-50%, -50%) scale(1.4);
+            opacity: 0;
+        }
+        .envelope-scene.fade-out {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        /* 2-BOSQICH: ICHKARI SAHIFA */
+        .invitation-card {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 70px 25px 40px 25px;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        /* RASM TINIQ VA ANIQ BO'LISHI UCHUN BLUR OLIB TASHALDI */
+        .card-bg-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('couple.jpg.png') center / cover no-repeat;
+            filter: none;
+            z-index: 1;
+        }
+
+        /* PARDA O'G'IRLIGI PASAYTIRILDI (TINIQ KO'RINI) */
+        .card-bg-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.35);
+            z-index: 2;
+        }
+
+        .card-content {
+            position: relative;
+            z-index: 3;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .inv-title {
+            font-size: 11px;
+            letter-spacing: 2.5px;
+            color: #0f172a;
+            text-transform: uppercase;
+            font-weight: 800;
+            text-shadow: 0 1px 4px rgba(255,255,255,1), 0 -1px 4px rgba(255,255,255,1);
+        }
+
+        .inv-names {
+            font-family: 'Alex Brush', cursive;
+            font-size: 56px;
+            color: #0f172a;
+            margin-top: 5px;
+            font-weight: bold;
+            text-shadow: 0 2px 8px rgba(255,255,255,1), 0 -2px 8px rgba(255,255,255,1), 2px 0 8px rgba(255,255,255,1), -2px 0 8px rgba(255,255,255,1);
+        }
+
+        .inv-desc {
+            font-size: 14px;
+            line-height: 1.8;
+            color: #0f172a;
+            font-weight: 700;
+            margin: 20px 0;
+            text-shadow: 0 2px 6px rgba(255,255,255,1), 0 -2px 6px rgba(255,255,255,1), 2px 0 6px rgba(255,255,255,1), -2px 0 6px rgba(255,255,255,1);
+        }
+
+        .inv-box {
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid rgba(255, 255, 255, 1);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            backdrop-filter: blur(5px);
+        }
+
+        .map-btn {
+            display: block;
+            margin-top: 15px;
+            padding: 14px;
+            background: #1e3a8a;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 25px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            box-shadow: 0 6px 18px rgba(30, 58, 138, 0.4);
+        }
+
+        .music-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: #1e3a8a;
+            color: white;
+            border: none;
+            z-index: 30;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="bgMusic" loop preload="auto">
+        <source src="music.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="card-container">
+        <button class="music-btn" onclick="toggleMusic(event)" id="musicIcon">🔊</button>
+
+        <div class="envelope-scene" id="envelopeScene" onclick="openEnvelope()">
+            <div class="envelope-flap flap-left"></div>
+            <div class="envelope-flap flap-right"></div>
+            
+            <div class="ribbon-line"></div>
+            <div class="floral-left"></div>
+            <div class="floral-right"></div>
+
+            <div class="bronze-seal">
+                <div class="seal-text">Wedding<br>Invitation</div>
+            </div>
+
+            <div class="click-hint">Taklifnomani ochish uchun bosing</div>
+        </div>
+
+        <div class="invitation-card">
+            <div class="card-bg-image"></div>
+            <div class="card-bg-overlay"></div>
+
+            <div class="card-content">
+                <div>
+                    <div class="inv-title">Nikoh To'yi Taklifnomasi</div>
+                    <!-- ISMLAR TARTIBI O'ZGARTIRILDI: OZODBEK & SHAXRIZODA -->
+                    <div class="inv-names">Ozodbek & Shaxrizoda</div>
+                </div>
+
+                <p class="inv-desc">
+                    Hayotimizning eng quvonchli va hayajonli kunida — oila qurish tantanamizda siz azizlarni yonimizda ko'rishdan cheksiz mamnun bo'lamiz!
+                </p>
+
+                <div>
+                    <div class="inv-box">
+                        <div style="font-family: 'Cinzel', serif; font-weight: 700; font-size: 16px; color: #0f172a;">🗓 6-SENTYABR, 2026 • 19:00</div>
+                        <div style="font-size: 13px; color: #0284c7; margin-top: 6px; font-weight: 700;">📍 Buxoro shahar, "Shohsaroy" restorani</div>
+                    </div>
+
+                    <a href="https://www.google.com/maps/search/?api=1&query=Shohsaroy+restorani+Buxoro" target="_blank" class="map-btn">
+                        GOOGLE MAPS ORQALI OCHISH
+                    </a>
+                </div>
+
+                <div style="font-size: 11px; color: #0f172a; font-style: italic; margin-top: 10px; font-weight: 700; text-shadow: 0 1px 3px rgba(255,255,255,1);">
+                    Siz bilan birga bu kun yanada go'zal bo'ladi!
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const audio = document.getElementById('bgMusic');
+        let isPlaying = false;
+
+        function openEnvelope() {
+            const envelopeScene = document.getElementById('envelopeScene');
+            envelopeScene.classList.add('open');
+            playAudio();
+
+            setTimeout(() => {
+                envelopeScene.classList.add('fade-out');
+            }, 1100);
+        }
+
+        function playAudio() {
+            audio.currentTime = 0;
+            audio.play().then(() => {
+                isPlaying = true;
+                document.getElementById('musicIcon').innerHTML = '🔊';
+            }).catch(e => {
+                console.log("Audio ijro xatosi:", e);
+            });
+        }
+
+        function toggleMusic(event) {
+            event.stopPropagation();
+            if (isPlaying) {
+                audio.pause();
+                document.getElementById('musicIcon').innerHTML = '🔇';
+                isPlaying = false;
+            } else {
+                playAudio();
+            }
+        }
+    </script>
+</body>
+</html>
